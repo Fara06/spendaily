@@ -2,54 +2,72 @@
 
 import { motion } from "framer-motion";
 import { Star, CheckCircle, Lock, Info } from "lucide-react";
+import { useGetUserMissionById, useVerifyMissionDay } from "@/query/misi";
 
 interface MissionDetailProps {
+    missionId: number | null;
     onComplete: () => void;
     onBack: () => void;
 }
 
-export default function MissionDetail({ onComplete, onBack }: MissionDetailProps) {
+export default function MissionDetail({
+    missionId,
+    onComplete,
+    onBack,
+}: MissionDetailProps) {
+
+    const { data, isLoading } = useGetUserMissionById(missionId || 0);
+    const { mutate: verifyMission, isPending } = useVerifyMissionDay();
+
+    if (!missionId) return <p>No mission selected</p>;
+    if (isLoading) return <p>Loading...</p>;
+
+    const mission = data?.mission;
+
+    const progress = data?.progress || 0;
+    const target = mission?.target_value || 1;
+
+    const percentage = Math.min((progress / target) * 100, 100);
+
+    const handleVerify = () => {
+        verifyMission(data!.id, {
+            onSuccess: () => {
+                if (percentage >= 100) {
+                    onComplete();
+                }
+            },
+        });
+    };
+
     return (
         <div className="max-w-5xl mx-auto">
+
+            {/* HEADER */}
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                 <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-secondary font-bold">
-                        <Star size={16} fill="currentColor" />
-                        <span className="uppercase tracking-[0.2em] text-[10px] font-black">
-                            Active Mission
-                        </span>
-                    </div>
-
-                    <h1 className="text-4xl md:text-5xl font-black tracking-tight">
-                        No Late Night Spending
+                    <h1 className="text-4xl font-black">
+                        {mission?.title}
                     </h1>
 
-                    <p className="text-on-surface-variant text-lg font-medium">
-                        Keep your wallet tucked away after 9:00 PM.
+                    <p className="text-on-surface-variant text-lg">
+                        {mission?.description}
                     </p>
                 </div>
 
-                <div className="flex gap-3">
-                    <button className="bg-surface-container-high px-6 py-3 rounded-xl font-bold">
-                        View Rules
-                    </button>
-
-                    <button
-                        onClick={onBack}
-                        className="bg-red-500/10 text-red-500 px-6 py-3 rounded-xl font-bold"
-                    >
-                        Give Up
-                    </button>
-                </div>
+                <button
+                    onClick={onBack}
+                    className="bg-red-500/10 text-red-500 px-6 py-3 rounded-xl font-bold"
+                >
+                    Give Up
+                </button>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="lg:col-span-7 bg-primary/10 rounded-xl p-10 text-center"
-                >
+
+                {/* PROGRESS */}
+                <motion.div className="lg:col-span-7 bg-primary/10 rounded-xl p-10 text-center">
                     <div className="relative w-64 h-64 mx-auto">
+
                         <svg className="absolute inset-0 w-full h-full -rotate-90">
                             <circle
                                 cx="50%" cy="50%" r="45%"
@@ -63,54 +81,41 @@ export default function MissionDetail({ onComplete, onBack }: MissionDetailProps
                                 strokeWidth="20"
                                 fill="transparent"
                                 strokeDasharray="283"
-                                initial={{ strokeDashoffset: 283 }}
-                                animate={{ strokeDashoffset: 150 }}
+                                animate={{
+                                    strokeDashoffset: 283 - (283 * percentage) / 100,
+                                }}
                             />
                         </svg>
 
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <span className="text-5xl font-black">1/3</span>
-                            <span className="text-xs uppercase">Days</span>
+                            <span className="text-4xl font-black">
+                                {progress} / {target}
+                            </span>
+                            <span className="text-xs uppercase">Progress</span>
                         </div>
                     </div>
-
-                    <p className="mt-6 font-bold">
-                        You saved <span className="text-xl">$42.50</span>
-                    </p>
                 </motion.div>
 
-                <div className="lg:col-span-5 space-y-4">
-                    <h3 className="text-xl font-bold">Daily Log</h3>
+                {/* ACTION */}
+                <div className="lg:col-span-5 space-y-6">
+                    <h3 className="text-xl font-bold">Action</h3>
 
-                    <LogItem
-                        status="completed"
-                        title="Day 1"
-                        desc="Success"
-                    />
-
-                    <LogItem
-                        status="current"
-                        title="Day 2"
-                        desc="In progress"
-                        onAction={onComplete}
-                    />
-
-                    <LogItem
-                        status="locked"
-                        title="Day 3"
-                        desc="Locked"
-                    />
-
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="bg-yellow-100 p-4 rounded-xl flex gap-3"
+                    <button
+                        onClick={handleVerify}
+                        disabled={isPending}
+                        className="w-full bg-blue-500 text-white py-3 rounded-xl font-bold"
                     >
-                        <Info />
-                        <p className="text-sm">
-                            Stay consistent to maximize savings!
-                        </p>
-                    </motion.div>
+                        {isPending ? "Verifying..." : "Verify Today"}
+                    </button>
+
+                    {percentage >= 100 && (
+                        <button
+                            onClick={onComplete}
+                            className="w-full bg-green-500 text-white py-3 rounded-xl font-bold"
+                        >
+                            Claim Reward
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

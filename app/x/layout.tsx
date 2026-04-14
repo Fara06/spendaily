@@ -1,5 +1,6 @@
 import Sidebar from "./dashboard/_components/Sidebar";
 
+
 export default function XLayout({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex min-h-screen bg-surface-container-low overflow-hidden">

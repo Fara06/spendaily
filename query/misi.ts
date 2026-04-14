@@ -3,6 +3,7 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { api } from "@/core/utils/service";
 import { MutationParams } from "@/core/types/query";
+import { useQueryClient } from "@tanstack/react-query";
 
 export type Mission = {
   id: number;
@@ -18,6 +19,10 @@ export type Mission = {
   is_flash: boolean;
   estimated_saving: number;
   participants_count: number;
+  progress?: number;
+  progress_percentage?: number;
+  status?: string;
+  is_claimed?: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -29,7 +34,7 @@ export type UserMission = {
   start_date: string;
   end_date: string;
   progress: number;
-  status: "active" | "completed" | "failed" | "abandoned";
+  status: "in_progress" | "completed" | "failed";
   is_claimed: boolean;
   created_at: string;
   updated_at: string;
@@ -40,7 +45,7 @@ export type UserMissionWithDetail = UserMission & {
 };
 
 
-export const useGetMissions = () => {
+export const useGetMissions = (p0: string) => {
   return useQuery({
     queryKey: ["missions"],
     queryFn: async () => {
@@ -97,7 +102,7 @@ export const useGetActiveMissions = () => {
     queryKey: ["user-missions", "active"],
     queryFn: async () => {
       const res = await api.get<UserMissionWithDetail[]>(
-        "/user-missions?status=active",
+        "/user-missions?status=in_progress",
       );
       return res.data;
     },
@@ -129,10 +134,16 @@ export const useGetUserMissionById = (id: number) => {
 
 
 export const useStartMission = (props?: MutationParams<UserMission>) => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (mission_id: number) => {
       const res = await api.post<UserMission>("/user-missions", { mission_id });
       return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-missions"] });
+      queryClient.invalidateQueries({ queryKey: ["user-missions", "active"] });
     },
     ...props,
   });
