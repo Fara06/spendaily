@@ -1,4 +1,4 @@
-import SavingsPage from "./_components/SavingPage";
+import SavingsPage from "./_components/SavingsPage";
 
 export default function Page() {
   return <SavingsPage />;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useGetTopSpends } from '@/query/insight';
+import { formatRupiah } from './Format';
 
 export default function TopSpend() {
     const { data = [], isLoading } = useGetTopSpends("weekly");
@@ -31,8 +32,9 @@ export default function TopSpend() {
                                 </div>
                                 <span className="font-bold text-on-surface">{item.category_name}</span>
                             </div>
+
                             <span className="font-black text-primary">
-                                Rp{Number(item.total).toLocaleString('id-ID')}
+                                {formatRupiah(item.total)}
                             </span>
                         </div>
                     ))}

@@ -28,7 +28,7 @@ export default function RecentActivity() {
   const recent = transactions.slice(0, 5);
 
   return (
-    <div className="col-span-12 bg-surface-container-lowest p-10 rounded-xl marshmallow-shadow">
+    <div className="col-span-12 bg-surface-container-highest p-10 rounded-xl marshmallow-shadow">
       <div className="flex justify-between items-center mb-8">
         <h4 className="font-extrabold text-2xl">Recent Activity</h4>
         <button className="text-primary font-bold hover:underline">View All</button>
@@ -44,7 +44,7 @@ export default function RecentActivity() {
             <motion.div
               key={tx.id}
               whileHover={{ x: 8 }}
-              className="flex items-center justify-between p-4 bg-surface-container-low rounded-lg transition-all"
+              className="flex items-center justify-between p-4 bg-surface rounded-lg transition-all"
             >
               <div className="flex items-center gap-6">
                 <div

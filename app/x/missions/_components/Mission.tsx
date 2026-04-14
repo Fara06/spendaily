@@ -34,7 +34,7 @@ export default function Missions({ user, onMissionClick }: MissionsProps) {
         startMission(id, {
             onSuccess: () => {
                 setLoadingId(null);
-                onMissionClick(id); 
+                onMissionClick(id);
             },
             onError: () => {
                 setLoadingId(null);
@@ -73,7 +73,7 @@ export default function Missions({ user, onMissionClick }: MissionsProps) {
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
                     {/* FEATURED */}
                     {featured && (
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             className="md:col-span-8 bg-slate-50 rounded-2xl p-8 flex flex-col md:flex-row gap-8 items-center border border-slate-100 shadow-sm"
@@ -130,7 +130,7 @@ export default function Missions({ user, onMissionClick }: MissionsProps) {
                                 pts={m.reward_points}
                                 // Jika progress_percentage tidak ada di type Mission, 
                                 // pastikan di core/types/index.ts ditambahkan atau fallback ke 0
-                                progress={(m as any).progress_percentage ?? 0} 
+                                progress={(m as any).progress_percentage ?? 0}
                                 onStart={() => handleStart(m.id)}
                                 loading={loadingId === m.id}
                                 anyLoading={loadingId !== null}

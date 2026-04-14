@@ -39,7 +39,7 @@ function HabitSection({
 
   return (
     <div
-      className={`col-span-12 md:col-span-6 p-8 rounded-xl flex flex-col gap-6 ${
+      className={`col-span-12 md:col-span-6 p-8 rounded-[2.5rem] flex flex-col gap-6 ${
         isGood ? "bg-secondary-container/40" : "bg-primary-container/30"
       }`}
     >
@@ -69,7 +69,7 @@ function HabitSection({
           {items.map((item) => (
             <div
               key={item.id}
-              className="bg-white/60 p-4 rounded-lg flex items-center justify-between"
+              className="bg-surface-container-highest p-4 rounded-lg flex items-center justify-between"
             >
               <div className="flex items-center gap-3">
                 <div
