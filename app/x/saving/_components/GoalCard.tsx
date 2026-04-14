@@ -20,7 +20,8 @@ function formatRupiah(amount: number) {
 }
 
 export default function GoalCard({ onAddTarget }: { onAddTarget: () => void }) {
-    const { data: target, isLoading } = useGetSavingsTarget();
+    const { data: targets, isLoading } = useGetSavingsTarget();
+    const target = targets?.[0];
     const { data: summary } = useGetTransactionSummary("monthly");
     const { mutate: deleteTarget } = useDeleteSavingsTarget();
     const queryClient = useQueryClient();
@@ -118,7 +119,7 @@ export default function GoalCard({ onAddTarget }: { onAddTarget: () => void }) {
 
                         <div>
                             <h3 className="text-3xl font-extrabold text-on-primary-container mb-1 leading-tight">
-                                Savings Target
+                                {target.title ?? "Savings Target"}
                             </h3>
                             <p className="text-[10px] font-bold text-on-primary-container/60 uppercase tracking-widest mb-4">
                                 {startDate} – {endDate}

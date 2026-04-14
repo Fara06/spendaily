@@ -39,7 +39,6 @@ export const useLogin = (props?: MutationParams<AuthRes>) => {
   return useMutation({
     mutationFn: async (params: LoginParams) => {
       const res = await api.post<AuthRes>("/auth/login", params);
-      // Simpan di localStorage DAN cookie
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       Cookies.set("token", res.data.token, { expires: 7 });

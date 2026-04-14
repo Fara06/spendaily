@@ -4,20 +4,23 @@ import { LayoutGrid, Wallet, PiggyBank, BarChart3, Plus, Settings, LogOut } from
 import { motion } from "motion/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLogout } from "@/query/auth";
+import { useAuth } from "@/core/providers/Auth-context";
 
 const navItems = [
     { label: "Dashboard", icon: LayoutGrid, href: "/x/dashboard" },
     { label: "Budgets", icon: Wallet, href: "/x/budgets" },
     { label: "Savings", icon: PiggyBank, href: "/x/saving" },
-    { label: "Insights", icon: BarChart3, href: "/x/insights" },
+    { label: "Insights", icon: BarChart3, href: "/x/insight" },
 ];
 
 export default function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
+    const { user, setUser } = useAuth(); 
 
     const { mutate: logout } = useLogout({
         onSuccess: () => {
+            setUser(null);
             router.push("/login");
         },
     });
@@ -27,7 +30,7 @@ export default function Sidebar() {
             <div className="px-4 mb-10">
                 <h1 className="text-2xl font-black text-primary tracking-tight">Spendaily</h1>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-primary/60 mt-1">
-                    Hello, Marshmallow!
+                    Hello, {user?.name ?? "there"}! 
                 </p>
             </div>
 
@@ -40,8 +43,8 @@ export default function Sidebar() {
                             href={href}
                             whileHover={{ x: 4 }}
                             className={`flex items-center gap-3 rounded-full px-6 py-3 font-medium transition-all ${isActive
-                                    ? "bg-primary-container text-primary font-bold"
-                                    : "text-primary/70 hover:bg-primary-container/30"
+                                ? "bg-primary-container text-primary font-bold"
+                                : "text-primary/70 hover:bg-primary-container/30"
                                 }`}
                         >
                             <Icon size={20} />

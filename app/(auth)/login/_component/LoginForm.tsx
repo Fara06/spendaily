@@ -11,6 +11,7 @@ import * as z from "zod";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { useLogin } from "@/query/auth";
+import { useAuth } from "@/core/providers/Auth-context";
 
 const formSchema = z.object({
   email: z.string().email("Email tidak valid"),
@@ -21,6 +22,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function LoginForm() {
   const router = useRouter();
+  const { setUser } = useAuth(); // ← tambah ini
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [snackbar, setSnackbar] = useState<{
@@ -40,7 +42,8 @@ export default function LoginForm() {
   });
 
   const { mutate: login } = useLogin({
-    onSuccess: () => {
+    onSuccess: (data) => { // ← tambah `data` parameter
+      setUser(data.user); // ← tambah ini
       setSnackbar({ open: true, message: "Login berhasil! Selamat datang kembali", severity: "success" });
       setTimeout(() => router.push("/x/dashboard"), 1500);
     },
@@ -56,6 +59,7 @@ export default function LoginForm() {
     login({ email: data.email, password: data.password });
   };
 
+  // ... sisa JSX tidak berubah sama sekali
   return (
     <div className="relative min-h-screen flex flex-col items-center">
       <Snackbar
@@ -71,7 +75,6 @@ export default function LoginForm() {
         </Alert>
       </Snackbar>
 
-      {/* Background Blobs */}
       <div className="fixed -bottom-40 -left-40 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(152,244,217,0.3)_0%,rgba(255,255,255,0)_70%)] -z-10 pointer-events-none" />
       <div className="fixed -top-40 -right-40 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(253,181,204,0.2)_0%,rgba(255,255,255,0)_70%)] -z-10 pointer-events-none" />
 

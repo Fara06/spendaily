@@ -17,10 +17,11 @@ export default function SetTargetModal({ onClose, existing }: Props) {
   const queryClient = useQueryClient();
 
   const [form, setForm] = useState({
+    title: existing?.title ?? "",
     target_amount: existing?.target_amount?.toString() ?? "",
     daily_limit: existing?.daily_limit?.toString() ?? "",
-    start_date: existing?.start_date ?? "",
-    end_date: existing?.end_date ?? "",
+    start_date: existing?.start_date?.slice(0, 10) ?? "",
+    end_date: existing?.end_date?.slice(0, 10) ?? "",
   });
 
   const [snackbar, setSnackbar] = useState<{
@@ -34,12 +35,18 @@ export default function SetTargetModal({ onClose, existing }: Props) {
   const isPending = creating || updating;
 
   const handleSubmit = () => {
-    if (!form.target_amount || !form.daily_limit || !form.start_date || !form.end_date) {
+    if (!form.title || !form.target_amount || !form.daily_limit || !form.start_date || !form.end_date) {
       setSnackbar({ open: true, message: "Semua field harus diisi.", severity: "error" });
       return;
     }
 
+    if (form.end_date <= form.start_date) {
+      setSnackbar({ open: true, message: "End date harus setelah start date.", severity: "error" });
+      return;
+    }
+
     const params = {
+      title: form.title,
       target_amount: parseFloat(form.target_amount),
       daily_limit: parseFloat(form.daily_limit),
       start_date: form.start_date,
@@ -99,6 +106,19 @@ export default function SetTargetModal({ onClose, existing }: Props) {
         </div>
 
         <div className="space-y-5">
+          <div className="space-y-2">
+            <label className="block text-[11px] font-bold text-on-surface-variant uppercase tracking-[0.2em] px-2">
+              Title
+            </label>
+            <input
+              type="text"
+              placeholder="My savings goal"
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              className="w-full bg-surface-container rounded-full px-6 py-4 text-on-surface font-medium outline-none border-none"
+            />
+          </div>
+
           <div className="space-y-2">
             <label className="block text-[11px] font-bold text-on-surface-variant uppercase tracking-[0.2em] px-2">
               Target Amount (Rp)

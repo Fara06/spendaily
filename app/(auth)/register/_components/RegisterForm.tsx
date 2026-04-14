@@ -123,7 +123,7 @@ export default function RegisterForm() {
             Join the Bubbly Saving Journey!
           </h1>
           <p className="text-slate-500 font-medium">
-            Let's make managing your finances as soft and sweet as a macaron.
+            Let`s make managing your finances as soft and sweet as a macaron.
           </p>
         </motion.div>
 
