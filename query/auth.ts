@@ -11,6 +11,7 @@ export type UserData = {
   email: string;
   google_id?: string | null;
   avatar?: string | null;
+  points?: number; 
   created_at?: string;
   updated_at?: string;
 };

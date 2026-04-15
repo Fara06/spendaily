@@ -4,7 +4,18 @@ import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { getMissionIcon } from "./getMissionIcon";
 
-export default function MissionCard({ mission, index, onStart }: any) {
+type Mission = {
+    id: number;
+    title: string;
+};
+
+type Props = {
+    mission: Mission;
+    index: number;
+    onStart: (id: number) => void;
+};
+
+export default function MissionCard({ mission, index, onStart }: Props) {
     return (
         <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -12,9 +23,13 @@ export default function MissionCard({ mission, index, onStart }: any) {
             transition={{ delay: index * 0.1 }}
             className="bg-white p-4 rounded-xl border"
         >
-            <div className="text-2xl">{getMissionIcon(mission.title)}</div>
+            <div className="text-2xl">
+                {getMissionIcon(mission?.title ?? "")}
+            </div>
 
-            <p className="font-bold">{mission.title}</p>
+            <p className="font-bold">
+                {mission?.title ?? "Untitled Mission"}
+            </p>
 
             <button
                 onClick={() => onStart(mission.id)}

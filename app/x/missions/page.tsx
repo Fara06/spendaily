@@ -61,6 +61,7 @@ export default function MissionsPage() {
     const { data: activeMissions } = useGetActiveMissions();
     const active = activeMissions?.[0] ?? null;
 
+    
     useEffect(() => { setMounted(true); }, []);
 
     const refresh = useCallback(() => {

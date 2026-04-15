@@ -1,7 +1,7 @@
 "use client";
 
-import { useGetTopSpends } from '@/query/insight';
-import { formatRupiah } from './Format';
+import { useGetTopSpends } from "@/query/insight";
+import { formatRupiah } from "./Format";
 
 export default function TopSpend() {
     const { data = [], isLoading } = useGetTopSpends("weekly");
@@ -16,9 +16,13 @@ export default function TopSpend() {
             </div>
 
             {isLoading ? (
-                <div className="text-center text-on-surface-variant py-4">Loading...</div>
+                <div className="text-center text-on-surface-variant py-4">
+                    Loading...
+                </div>
             ) : data.length === 0 ? (
-                <div className="text-center text-on-surface-variant py-4">No spending this week.</div>
+                <div className="text-center text-on-surface-variant py-4">
+                    No spending this week.
+                </div>
             ) : (
                 <div className="flex flex-col gap-3">
                     {data.slice(0, 5).map((item) => (
@@ -30,11 +34,13 @@ export default function TopSpend() {
                                 <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-lg">
                                     {item.category_icon}
                                 </div>
-                                <span className="font-bold text-on-surface">{item.category_name}</span>
+                                <span className="font-bold text-on-surface">
+                                    {item.category_name}
+                                </span>
                             </div>
 
                             <span className="font-black text-primary">
-                                {formatRupiah(item.total)}
+                                {formatRupiah(item.total ?? 0)}
                             </span>
                         </div>
                     ))}

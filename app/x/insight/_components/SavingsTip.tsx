@@ -13,7 +13,7 @@ export default function SavingsTip() {
                 <p>Loading...</p>
             ) : (
                 <p className="text-xl font-black mt-2">
-                    {data?.tip ?? "Keep saving!"}
+                    {data?.tip || "Keep saving!"}
                 </p>
             )}
         </section>

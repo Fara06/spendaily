@@ -12,6 +12,8 @@ export default function TimeOfDay() {
 
             {isLoading ? (
                 <p>Loading...</p>
+            ) : data.length === 0 ? (
+                <p className="text-gray-400">No data</p>
             ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
                     {data.map((item, i) => (
@@ -21,9 +23,7 @@ export default function TimeOfDay() {
                             className="bg-primary/10 rounded-2xl p-4 text-center"
                         >
                             <p className="text-sm font-bold">{item.period}</p>
-                            <p className="text-xl font-black">
-                                {item.percent}%
-                            </p>
+                            <p className="text-xl font-black">{item.percent}%</p>
                         </motion.div>
                     ))}
                 </div>

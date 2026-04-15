@@ -6,19 +6,24 @@ import { formatRupiah } from "./Format";
 
 export default function SpendingDynamics() {
     const { data = [], isLoading } = useGetSpendingByCategory();
-    const max = Math.max(...data.map((d) => d.total), 1);
+
+    const safeData = data ?? [];
+    const max =
+        safeData.length > 0
+            ? Math.max(...safeData.map((d) => d.total || 0))
+            : 1;
 
     return (
         <section className="bg-white rounded-3xl p-6 border border-primary/10 shadow-sm min-h-[400px] relative">
             <h3 className="text-lg font-black mb-1">Spending Dynamics</h3>
-            <p className="text-xs text-gray-400 mb-6">
-                30 hari terakhir
-            </p>
+            <p className="text-xs text-gray-400 mb-6">30 hari terakhir</p>
 
             {isLoading ? (
                 <p>Loading...</p>
+            ) : safeData.length === 0 ? (
+                <p className="text-gray-400">No data</p>
             ) : (
-                data.slice(0, 5).map((item, i) => (
+                safeData.slice(0, 5).map((item, i) => (
                     <motion.div
                         key={i}
                         whileHover={{ scale: 1.05 }}
@@ -32,7 +37,7 @@ export default function SpendingDynamics() {
                     >
                         <span className="text-xs">{item.category_name}</span>
                         <span className="font-bold">
-                            {formatRupiah(item.total)}
+                            {formatRupiah(item.total ?? 0)}
                         </span>
                     </motion.div>
                 ))

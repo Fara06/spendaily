@@ -2,19 +2,21 @@
 
 import { Bell, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGetUser } from "@/query/dashboard";
 import { useLogout } from "@/query/auth";
 import { useAuth } from "@/core/providers/Auth-context";
 
-export default function HeaderMinimal() {
+export default function HeaderMinimalis() {
     const { data: user } = useGetUser();
     const { setUser } = useAuth();
     const router = useRouter();
 
     const [open, setOpen] = useState(false);
-    const dropdownRef = useRef(null);
+
+    // ✅ FIX UTAMA DI SINI
+    const dropdownRef = useRef<HTMLDivElement | null>(null);
 
     const { mutate: logout } = useLogout({
         onSuccess: () => {
@@ -24,83 +26,61 @@ export default function HeaderMinimal() {
     });
 
     useEffect(() => {
-        function handleClickOutside(e) {
-            if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(e.target)
-            ) {
+        function handleClickOutside(e: MouseEvent) {
+            if (!dropdownRef.current) return;
+
+            const target = e.target as Node;
+
+            if (!dropdownRef.current.contains(target)) {
                 setOpen(false);
             }
         }
 
         document.addEventListener("mousedown", handleClickOutside);
-        return () =>
+
+        return () => {
             document.removeEventListener("mousedown", handleClickOutside);
+        };
     }, []);
 
     return (
-        <header className="flex justify-between items-center w-full px-8 py-6 sticky top-0 z-40 bg-surface/80 backdrop-blur-xl">
-
-            {/* LEFT */}
+        <header className="sticky top-0 z-40 bg-[#FDF8F3]/80 backdrop-blur-xl border-b border-primary/10 px-6 py-4 flex justify-between items-center">
             <div>
-                <h2 className="text-3xl font-extrabold text-primary tracking-tight">
-                    Budgets
-                </h2>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant opacity-50">
-                    Managing your sweetness
+                <h2 className="text-xl font-black text-primary">Insights</h2>
+                <p className="text-xs text-on-surface-variant">
+                    Lihat pola pengeluaran kamu
                 </p>
             </div>
 
-            {/* RIGHT */}
             <div className="flex items-center gap-4">
-
-                {/* NOTIFICATION */}
-                <motion.button
-                    whileHover={{ scale: 0.95 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="p-3 rounded-full hover:bg-surface-container transition relative"
-                >
-                    <Bell className="text-primary" size={20} />
-                    <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
+                <motion.button whileTap={{ scale: 0.9 }}>
+                    <Bell size={20} />
                 </motion.button>
 
-                {/* AVATAR */}
+                {/* dropdown ref dipasang di sini */}
                 <div ref={dropdownRef} className="relative">
                     <button onClick={() => setOpen(!open)}>
-                        <div className="w-11 h-11 rounded-full bg-primary-container overflow-hidden border border-primary-container">
-                            {user?.avatar ? (
-                                <img
-                                    src={user.avatar}
-                                    className="w-full h-full object-cover"
-                                />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center text-primary font-black">
-                                    {user?.name?.charAt(0) ?? "U"}
-                                </div>
-                            )}
+                        <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                            {user?.name?.charAt(0) ?? "U"}
                         </div>
                     </button>
 
                     <AnimatePresence>
                         {open && (
                             <motion.div
-                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                className="absolute right-0 mt-3 w-56 bg-surface-container-lowest rounded-2xl shadow-xl p-4"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0 }}
+                                className="absolute right-0 mt-3 w-52 bg-white rounded-xl shadow-lg p-4"
                             >
-                                <div className="mb-3">
-                                    <p className="font-bold text-primary text-sm">
-                                        {user?.name}
-                                    </p>
-                                    <p className="text-xs text-on-surface-variant">
-                                        {user?.email}
-                                    </p>
-                                </div>
+                                <p className="font-bold">{user?.name}</p>
+                                <p className="text-xs text-gray-400 mb-2">
+                                    {user?.email}
+                                </p>
 
                                 <button
                                     onClick={() => logout()}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-100 text-red-500 text-sm"
+                                    className="text-red-500 text-sm flex gap-2 items-center"
                                 >
                                     <LogOut size={16} />
                                     Logout

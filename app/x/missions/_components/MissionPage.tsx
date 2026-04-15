@@ -27,7 +27,9 @@ export default function MissionsPage() {
 
     const active = activeMissions?.[0] ?? null;
 
-    useEffect(() => setMounted(true), []);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const refresh = useCallback(() => {
         queryClient.invalidateQueries({ queryKey: ["user-missions"] });
@@ -35,10 +37,13 @@ export default function MissionsPage() {
     }, [queryClient]);
 
     const handleStart = (id: number) => {
-        if (active) return alert("Kamu sudah punya mission aktif!");
+        if (active) {
+            alert("Kamu sudah punya mission aktif!");
+            return;
+        }
 
         startMission(id, {
-            onSuccess: (res) => {
+            onSuccess: (res: any) => {
                 setSelectedMissionId(res.id);
                 refresh();
                 setView("detail");
@@ -74,7 +79,7 @@ export default function MissionsPage() {
                 <div className="flex items-center gap-2 bg-amber-50 px-4 py-2 rounded-full">
                     <Star size={14} className="text-amber-500 fill-amber-500" />
                     <span className="text-sm font-black">
-                        {user?.points?.toLocaleString() ?? 0}
+                        {(user?.points ?? 0).toLocaleString()}
                     </span>
                 </div>
             </header>
@@ -103,7 +108,7 @@ export default function MissionsPage() {
 
                     {view === "list" && (
                         <ListView
-                            onStart={(id) => {
+                            onStart={(id: number) => {
                                 setSelectedMissionId(id);
                                 setView("detail");
                             }}
